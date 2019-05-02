@@ -92,7 +92,13 @@ local ninja = display.newSprite( sheetIdleNinja, sequence_data )
 ninja.x = display.contentWidth / 2
 ninja.y = 300
 ninja.xScale = 58/363
-ninja.yScale = 77/458   
+ninja.yScale = 77/458
+ninja.width = 58
+ninja.height = 77
+physics.addBody( ninja, "dynamic", {
+    fricition = 0.5,
+    bounce = 0.1
+    })   
 
 ninja:play()
 
