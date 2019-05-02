@@ -26,13 +26,13 @@ local sheetOptionsIdle =
 }
 local sheetIdleNinja = graphics.newImageSheet( "assets/NinjaIdle.png", sheetOptionsIdle )
 
-local sheetOptionsWalk =
+local sheetOptionsDead =
 {
-    width = 363,
-    height = 458,
+    width = 482,
+    height = 498,
     numFrames = 10
 }
-local sheetWalkingNinja = graphics.newImageSheet( "assets/NinjaRunning.png", sheetOptionsWalk )
+local sheetDeadNinja = graphics.newImageSheet( "assets/NinjaDead.png", sheetOptionsDead )
 
 local sheetOptionsAttack =
 {
@@ -54,12 +54,12 @@ local sequence_data = {
         sheet = sheetIdleNinja
     },
     {
-        name = "walk",
+        name = "dead",
         start = 1,
         count = 10,
         time = 800,
         loopCount = 0,
-        sheet = sheetWalkingNinja
+        sheet = sheetDeadNinja
     }
 }
 
@@ -92,15 +92,15 @@ local ninja = display.newSprite( sheetIdleNinja, sequence_data )
 ninja.x = display.contentWidth / 2
 ninja.y = 300
 ninja.xScale = 58/363
-ninja.yScale = 77/458
+ninja.yScale = 77/458   
 
 ninja:play()
 
 -- After a short time, swap the sequence to 'seq2' which uses the second image sheet
 local function swapSheet()
-    ninja:setSequence( "walk" )
+    ninja:setSequence( "dead" )
     ninja:play()
-    print("walk")
+    print("dead")
 end
 
 timer.performWithDelay( 2000, swapSheet )
