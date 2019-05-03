@@ -9,14 +9,26 @@
 local physics = require( "physics")
 
 physics.start()
-physics.setGravity( 0, 1)
+physics.setGravity( 0, 10)
 physics.setDrawMode("hybrid")
+
+local playerBullets = {} -- Table that holds the players Bullets
 
 local ground = display.newRect( 160, 510, 450, 20)
 physics.addBody( ground, "static", {
     friction = 0.3,
     bounce = 0.3
     })
+
+local leftWall = display.newRect( -50, display.contentCenterY, 100, 560)
+leftWall.id = "left wall"
+physics.addBody( leftWall, "static", {
+    friction = 0.5,
+    bounce = 0.1
+    })
+
+local shootButton = display.newCircle( 270, 350, 40)
+shootButton.alpha = 0.5
 
 local sheetOptionsIdle =
 {
@@ -69,9 +81,17 @@ local sequenceData = {
         start = 1,
         count = 10,
         time = 800,
-        loopCount = 0,
+        loopCount = 1,
         sheet = sheetAttackingNinja
-	}
+	},
+    {
+        name = "idle",
+        start = 1,
+        count = 10,
+        time = 800,
+        loopCount = 0,
+        sheet = sheetIdleNinja
+    },
 }
 
 local AttackNinja = display.newSprite( sheetAttackingNinja, sequenceData )
@@ -86,6 +106,7 @@ physics.addBody( AttackNinja, "dynamic" ,{
     bounce = 0
     })
 
+AttackNinja:setSequence( "idle")
 AttackNinja:play()
 
 local ninja = display.newSprite( sheetIdleNinja, sequence_data )
@@ -103,12 +124,32 @@ physics.addBody( ninja, "dynamic", {
 ninja:play()
 
 -- After a short time, swap the sequence to 'seq2' which uses the second image sheet
-local function swapSheet()
-    ninja:setSequence( "dead" )
-    ninja:play()
-    print("dead")
+--local function swapSheet()
+--    ninja:setSequence( "dead" )
+--    ninja:play()
+--    print("dead")
+--end
+--
+--timer.performWithDelay( 2000, swapSheet )
+
+function shootButton:touch( event )
+    if ( event.phase == "began" ) then
+            AttackNinja:setSequence( "attack")
+            AttackNinja:play()
+            -- make a bullet appear
+            local aSingleBullet = display.newCircle( 0, 0, 10 )
+            aSingleBullet.x = AttackNinja.x +10
+            aSingleBullet.y = AttackNinja.y
+            physics.addBody( aSingleBullet, 'dynamic' )
+            -- Make the object a "bullet" type object
+            aSingleBullet.isBullet = true
+            aSingleBullet.gravityScale = (10)
+            aSingleBullet.id = "bullet"
+            aSingleBullet:setLinearVelocity( 1000, 0 )
+
+            table.insert(playerBullets,aSingleBullet)
+            print("# of bullet: " .. tostring(#playerBullets))
+    end
 end
 
-timer.performWithDelay( 2000, swapSheet )
-
-
+shootButton:addEventListener( "touch", shootButton)
